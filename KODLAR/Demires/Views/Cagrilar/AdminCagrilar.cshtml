@@ -1,0 +1,167 @@
+﻿<head>
+    <link rel="stylesheet" href="~/css/AdminCagrilar.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="box" id="uncategorized-box">
+            <h1>Kategorileştirilmemiş</h1>
+            <table class="table-bordered">
+                <thead class="table-warning">
+                    <tr>
+                        <th>ÇAĞRI ID</th>
+                        <th>KONU</th>
+                        <th>MESAJ</th>
+                    </tr>
+                </thead>
+                <tbody id="uncategorized-body">
+                    @foreach (var cagri in Model.UncategorizedCalls)
+                    {
+                        <tr>
+                            <td>@cagri.CagriID</td>
+                            <td>@cagri.Konu</td>
+                            <td>@cagri.Mesaj</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="box" id="unanswered-box">
+            <h1>Cevaplanmamış</h1>
+            <table class="table-bordered">
+                <thead class="table-warning">
+                    <tr>
+                        <th>ÇAĞRI ID</th>
+                        <th>KONU</th>
+                        <th>MESAJ</th>
+                    </tr>
+                </thead>
+                <tbody id="unanswered-body">
+                    @foreach (var cagri in Model.UnansweredCalls)
+                    {
+                        <tr>
+                            <td>@cagri.CagriID</td>
+                            <td>@cagri.Konu</td>
+                            <td>@cagri.Mesaj</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="box" id="answered-box">
+            <h1>Cevaplanmış</h1>
+            <table class="table-bordered">
+                <thead class="table-warning">
+                    <tr>
+                        <th>ÇAĞRI ID</th>
+                        <th>KONU</th>
+                        <th>MESAJ</th>
+                    </tr>
+                </thead>
+                <tbody id="answered-body">
+                    @foreach (var cagri in Model.AnsweredCalls)
+                    {
+                        <tr>
+                            <td>@cagri.CagriID</td>
+                            <td>@cagri.Konu</td>
+                            <td>
+                                @{
+                                    var message = cagri.Mesaj;
+                                    var result = new System.Text.StringBuilder();
+                                    int lastPos = 0;
+                                    int depth = 0;
+                                    int splitPos = -1;
+
+                                    for (int i = 0; i < message.Length; i++)
+                                    {
+                                        if (message[i] == '(')
+                                        {
+                                            if (depth == 0)
+                                            {
+                                                // Dış parantez bulundu
+                                                if (i > lastPos)
+                                                {
+                                                    // Parantez öncesi kısmı ekle (anahtar)
+                                                    result.Append(message.Substring(lastPos, i - lastPos));
+                                                    result.Append(": ");
+                                                }
+                                                splitPos = i;
+                                            }
+                                            depth++;
+                                        }
+                                        else if (message[i] == ')')
+                                        {
+                                            depth--;
+                                            if (depth == 0 && splitPos != -1)
+                                            {
+                                                // Dış parantez kapanışı, değeri ekle
+                                                result.Append(message.Substring(splitPos + 1, i - splitPos - 1));
+                                                result.Append("<br />");
+                                                lastPos = i + 1;
+                                            }
+                                        }
+                                    }
+
+                                    // Kalan kısmı ekle (eğer parantezsiz kısım varsa)
+                                    if (lastPos < message.Length)
+                                    {
+                                        result.Append(message.Substring(lastPos));
+                                    }
+
+                                    @Html.Raw(result.ToString())
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Sayfa yüklendiğinde ilk verileri çek
+        fetchCallData();
+
+        // Her 3 saniyede bir verileri güncelle (1 saniye çok sık olabilir)
+        setInterval(fetchCallData, 3000);
+    });
+
+    function fetchCallData() {
+        $.ajax({
+            url: '@Url.Action("GetCallData", "Cagrilar")', // Controller adını doğru verin
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response && response.uncategorizedCalls && response.unansweredCalls && response.answeredCalls) {
+                    updateTable('#uncategorized-body', response.uncategorizedCalls);
+                    updateTable('#unanswered-body', response.unansweredCalls);
+                    updateTable('#answered-body', response.answeredCalls);
+                } else {
+                    console.error("Geçersiz veri formatı:", response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX hatası:", status, error);
+                // Hata durumunda kullanıcıya bildirim gösterebilirsiniz
+                // alert("Veriler güncellenirken bir hata oluştu. Lütfen sayfayı yenileyin.");
+            }
+        });
+    }
+
+    function updateTable(tableId, calls) {
+        var $tableBody = $(tableId);
+        $tableBody.empty(); // Önceki verileri temizle
+
+        calls.forEach(function(cagri) {
+            var row = $('<tr>').append(
+                $('<td>').text(cagri.cagriID),
+                $('<td>').text(cagri.konu),
+                $('<td>').text(cagri.mesaj)
+            );
+            $tableBody.append(row);
+        });
+    }
+</script>

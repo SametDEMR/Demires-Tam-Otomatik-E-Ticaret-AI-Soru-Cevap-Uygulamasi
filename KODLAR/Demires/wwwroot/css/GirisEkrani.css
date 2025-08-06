@@ -1,0 +1,134 @@
+﻿<style >
+/* Reset ve temel stiller */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+}
+
+/* Ana container - Tam sayfa ortalama için */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* viewport height'in tamamını kapla */
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 131, 143, 0.2);
+    transition: transform 0.3s ease;
+    margin: 20px; /* Küçük ekranlarda kenarlardan boşluk */
+}
+
+    /* Diğer stiller aynı kalabilir */
+    .login-container:hover {
+        transform: translateY(-5px);
+    }
+
+    .login-container h2 {
+        text-align: center;
+        color: #006064;
+        margin-bottom: 25px;
+        font-size: 28px;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .login-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #00838f, #00bcd4);
+        }
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #006064;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #b2ebf2;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+        .form-group input:focus {
+            border-color: #00838f;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.2);
+        }
+
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #00838f, #00bcd4);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+    button[type="submit"]:hover {
+        background: linear-gradient(to right, #006064, #00838f);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 131, 143, 0.4);
+    }
+
+.error {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-left: 4px solid #d32f2f;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive ayarlar */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px;
+        margin: 15px;
+    }
+}
+
+</style >
